@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quotation Form</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 30px;
+      color: #333;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .a4 {
+      width: 210mm;
+      min-height: 297mm;
+      margin: auto;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;          
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 15px;
+      gap: 30px;
+    }
+
+    .logo img {
+      max-height: 80px;
+    }
+
+    .company {
+      text-align: right;                     
+    }
+
+    .company h2 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+      color: #2c3e50;
+    }
+
+    .company p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .project-heading {
+      text-align: center;
+      margin: 40px 0 20px 0;
+      font-size: 28px;
+      font-weight: bold;
+      color: #2c3e50;
+      min-height: 40px;
+    }
+
+    .project-section {
+      text-align: center;
+      margin: 20px 0 50px 0;
+    }
+
+    .project-section label {
+      font-size: 18px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 12px;
+      color: #444;
+    }
+
+    .project-section input {
+      width: 60%;
+      max-width: 500px;
+      padding: 14px;
+      font-size: 18px;
+      text-align: center;
+      border: 2px solid #0bbcd6;
+      border-radius: 10px;
+    }
+
+    .project-section input:focus {
+      border-color: #09a8c1;
+      box-shadow: 0 0 0 4px rgba(11,188,214,0.2);
+      outline: none;
+    }
+
+    .add-section {
+      position: relative;
+      text-align: left;
+      margin: 40px 0;
+    }
+
+    .add-btn {
+      background: #0bbcd6;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(11,188,214,0.3);
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .add-btn:hover {
+      background: #09a8c1;
+      transform: translateY(-2px);
+    }
+
+    .add-btn::after {
+      content: "▼";
+      font-size: 12px;
+      transition: transform 0.3s;
+    }
+
+    .add-btn.active::after {
+      transform: rotate(180deg);
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      padding: 15px;
+      z-index: 10;
+      min-width: 300px;
+      max-width: 600px;
+      display: none;
+    }
+
+    .dropdown.active {
+      display: block;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .product-card {
+      background: #f8fbff;
+      border: 1px solid #e0eafc;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 15px;
+      color: #2c3e50;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .product-card:hover {
+      background: #e6f4ff;
+      border-color: #0bbcd6;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(11,188,214,0.2);
+    }
+
+    .forms-area {
+      margin-top: 30px;
+    }
+
+    .form-box {
+      background: #f9fbfc;
+      border: 1px solid #dce8f0;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 40px; 
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 1; 
+    }
+
+    .form-box h3 {
+      margin-top: 0;
+      color: #0bbcd6;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      position: relative;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(231,76,60,0.3);
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+
+    .form-btn-section {
+      position: relative;
+      text-align: left;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .form-btn-section .add-btn {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .dimensions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #444;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #0bbcd6;
+      box-shadow: 0 0 0 3px rgba(11,188,214,0.1);
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .qty-input {
+      width: 100px;
+    }
+
+    .amount {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 40px;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid #ddd;
+    }
+
+    .total-box {
+      text-align: right;
+    }
+
+    .total-box label {
+      font-size: 16px;
+      color: #555;
+    }
+
+    .total-box input {
+      font-size: 20px;
+      font-weight: bold;
+      color: #0bbcd6;
+      text-align: right;
+      width: 200px;
+    }
+
+    .action-buttons {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 16px;
+      z-index: 1000;
+    }
+
+    .action-btn {
+      width: 56px;
+      height: 56px;
+      background: #0bbcd6;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(11,188,214,0.4);
+      transition: all 0.3s;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 12px 28px rgba(11,188,214,0.5);
+    }
+
+    .action-btn svg {
+      width: 26px;
+      height: 26px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .action-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 70px;
+      background: #333;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .action-btn:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .action-btn::before {
+      content: '';
+      position: absolute;
+      bottom: 60px;
+      width: 10px;
+      height: 10px;
+      background: #333;
+      transform: rotate(45deg);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s;
+    }
+
+    .action-btn:hover::before {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #downloadBtn { background: #0bbcd6; }
+    #saveBtn { background: #28a745; }
+    #loadBtn { background: #ffc107; color: #212529; }
+
+    @media (max-width: 768px) {
+      .action-buttons {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      .action-btn {
+        width: 52px;
+        height: 52px;
+      }
+      .action-btn svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .page-number {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .container { box-shadow: none; border-radius: 0; }
+      .add-section, .dropdown, .form-btn-section, .delete-btn, .project-section, .action-buttons {
+        display: none !important;
+      }
+      .page-number::after {
+        counter-increment: page;
+        content: "Page " counter(page);
+      }
+      .form-box, .footer { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container a4">
+  <div class="header">
+    <div class="logo">
+      <img src="C:\Users\HP\OneDrive\Pictures\A icon.ico" alt="Logo">
+    </div>
+    <div class="company">
+      <h2>Namma Puneeth Enterprises</h2>
+      <p>N09, Ground Floor Swastik Central, Neeligin Road,<br>
+        New Cotton Market, Hubli - 580029</p>
+      <p>Email: puneeth@gmail.com<br>
+        Contact: +91 00000 00000</p>
+    </div>
+  </div>
+
+  <div class="project-heading" id="projectHeading">Quotation</div>
+
+  <div class="project-section">
+    <label for="projectName">Enter the name of the project</label>
+    <input type="text" id="projectName" placeholder="e.g. Mr. Rajesh Residence, Hubli" autofocus>
+  </div>
+
+  <div class="add-section" id="initialAddSection" style="display: none;">
+    <button class="add-btn" id="addBtn">+ Add Products</button>
+
+    <div class="dropdown" id="dropdown">
+      <div class="product-grid">
+        <div class="product-card" onclick="selectProduct('Sliding Door')">Sliding Door</div>
+        <div class="product-card" onclick="selectProduct('Sliding Window')">Sliding Window</div>
+        <div class="product-card" onclick="selectProduct('Normal Door')">Normal Door</div>
+        <div class="product-card" onclick="selectProduct('Caboards')">Caboards</div>
+        <div class="product-card" onclick="selectProduct('Kitchen')">Kitchen</div>
+        <div class="product-card" onclick="selectProduct('Sliding small window')">Sliding small window</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="forms-area" id="formsArea"></div>
+
+  <div class="footer" id="footer" style="display: none;">
+    <div class="total-box">
+      <label>GST (18%)</label><br>
+      <input id="gst" readonly />
+    </div>
+    <div class="total-box">
+      <label>Grand Total</label><br>
+      <input id="grand" readonly />
+    </div>
+  </div>
+
+  <div class="page-number"></div>
+</div>
+
+<div class="action-buttons">
+
+  <button class="action-btn" id="downloadBtn" onclick="window.print()" data-tooltip="Download as PDF">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+      <path d="M6 14h12v8H6z"/>
+      <circle cx="12" cy="11" r="2"/>
+    </svg>
+  </button>
+
+  <button class="action-btn" id="saveBtn" data-tooltip="Save Quotation">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+      <line x1="16" y1="17" x2="8" y2="17"/>
+      <polyline points="10 9 9 9 8 9"/>
+    </svg>
+  </button>
+
+
+  <button class="action-btn" id="loadBtn" data-tooltip="Load Quotation">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="17 8 12 3 7 8"/>
+      <line x1="12" y1="3" x2="12" y2="15"/>
+    </svg>
+  </button>
+</div>
+
+<input type="file" id="loadInput" accept=".json" style="display: none;">
+
+<script>
+  const productListHTML = `
+    <div class="product-grid">
+      <div class="product-card" onclick="selectProduct('Sliding Door')">Sliding Door</div>
+      <div class="product-card" onclick="selectProduct('Sliding Window')">Sliding Window</div>
+      <div class="product-card" onclick="selectProduct('Normal Door')">Normal Door</div>
+      <div class="product-card" onclick="selectProduct('Caboards')">Caboards</div>
+      <div class="product-card" onclick="selectProduct('Kitchen')">Kitchen</div>
+      <div class="product-card" onclick="selectProduct('Sliding small window')">Sliding small window</div>
+    </div>
+  `;
+
+  const projectInput = document.getElementById('projectName');
+  const projectHeading = document.getElementById('projectHeading');
+  const initialAddSection = document.getElementById('initialAddSection');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const saveBtn = document.getElementById('saveBtn');
+  const loadBtn = document.getElementById('loadBtn');
+  const loadInput = document.getElementById('loadInput');
+  const footer = document.getElementById('footer');
+
+  let projectNameEntered = false;
+  let hasProducts = false;
+
+  function updateVisibility() {
+    if (projectNameEntered && hasProducts) {
+      footer.style.display = 'flex';
+      downloadBtn.style.display = 'flex';
+      saveBtn.style.display = 'flex';
+    } else {
+      footer.style.display = 'none';
+      downloadBtn.style.display = 'none';
+      saveBtn.style.display = 'none';
+    }
+    loadBtn.style.display = 'flex';
+  }
+
+  projectInput.addEventListener('input', function() {
+    const value = this.value.trim();
+    if (value.length > 0) {
+      projectHeading.textContent = value;
+      initialAddSection.style.display = 'block';
+      projectNameEntered = true;
+    } else {
+      projectHeading.textContent = 'Quotation';
+      initialAddSection.style.display = 'none';
+      projectNameEntered = false;
+    }
+    updateVisibility();
+  });
+
+  function hideAllAddButtons() {
+    document.querySelectorAll('.form-btn-section').forEach(section => {
+      section.style.display = 'none';
+    });
+    document.querySelectorAll('.dropdown.active').forEach(dd => {
+      dd.classList.remove('active');
+      dd.previousElementSibling.classList.remove('active');
+    });
+  }
+
+  function getProductPrefix(product) {
+    switch(product) {
+      case 'Sliding Door': return 'SD';
+      case 'Sliding Window': return 'SW';
+      case 'Normal Door': return 'ND';
+      case 'Caboards': return 'CB';
+      case 'Kitchen': return 'KT';
+      case 'Sliding small window': return 'SSW';
+      default: return 'PR';
+    }
+  }
+
+  function renumberProducts() {
+    const forms = document.querySelectorAll('.form-box');
+    forms.forEach((form, index) => {
+      const productName = form.querySelector('h3').textContent.replace('×', '').trim().replace('Product: ', '');
+      const prefix = getProductPrefix(productName);
+      const newCode = prefix + String(index + 1).padStart(2, '0');
+      const codeInput = form.querySelector('input[readonly]');
+      if (codeInput) codeInput.value = newCode;
+    });
+  }
+
+  function updateLastAddButton() {
+    const forms = document.querySelectorAll('.form-box');
+    const lastForm = forms[forms.length - 1];
+    if (lastForm) {
+      const lastBtnSection = lastForm.querySelector('.form-btn-section');
+      lastBtnSection.style.display = 'block';
+    }
+  }
+
+  function deleteProduct(formBox) {
+    formBox.remove();
+    renumberProducts();
+    calcTotals();
+    updateLastAddButton();
+
+    hasProducts = document.querySelectorAll('.form-box').length > 0;
+    updateVisibility();
+  }
+
+  function selectProduct(product) {
+    hideAllAddButtons();
+
+    const container = document.getElementById('formsArea');
+    const forms = document.querySelectorAll('.form-box');
+    const nextNumber = forms.length + 1;
+    const prefix = getProductPrefix(product);
+    const code = prefix + String(nextNumber).padStart(2, '0');
+
+    const form = document.createElement('div');
+    form.className = 'form-box';
+    form.innerHTML = `
+      <h3>Product: ${product}<button class="delete-btn" onclick="deleteProduct(this.closest('.form-box'))">×</button></h3>
+      <div class="grid">
+        <div><label>Code</label><input value="${code}" readonly></div>
+      </div>
+
+      <div class="dimensions-row">
+        <div><label>Width (mm)</label><input type="number" class="w" step="1"></div>
+        <div><label>Height (mm)</label><input type="number" class="h" step="1"></div>
+        <div><label>Total Area (sqft)</label><input class="area" readonly></div>
+      </div>
+
+      <div class="grid">
+        <div><label>Profile Brand</label>
+          <select>
+            <option>AluMax</option>
+            <option>PrimeProfile</option>
+            <option>EcoBuild</option>
+            <option>UltraFrame</option>
+          </select>
+        </div>
+
+        <div><label>Type</label>
+          <select>
+            <option>Single Panel</option>
+            <option>Double Panel</option>
+            <option>3 Track</option>
+          </select>
+        </div>
+
+        <div><label>Glazing</label>
+          <select>
+            <option>Clear Glass</option>
+            <option>Frosted Glass</option>
+            <option>Toughened Glass</option>
+          </select>
+        </div>
+
+        <div><label>Profile Color</label>
+          <select>
+            <option>White</option>
+            <option>Gray</option>
+            <option>Black</option>
+            <option>Light Blue</option>
+          </select>
+        </div>
+
+        <div><label>Rate / Sqft</label><input type="number" class="rate" step="0.01"></div>
+      </div>
+
+      <div class="row">
+        <div><label>Quantity</label><input type="number" class="qty qty-input" value="1" min="1"></div>
+        <div class="amount">Amount ₹ <span class="amountVal">0.00</span></div>
+      </div>
+
+      <div class="form-btn-section">
+        <button class="add-btn" onclick="toggleDropdown(this)">+ Add Another Product</button>
+        <div class="dropdown">${productListHTML}</div>
+      </div>
+    `;
+
+    container.appendChild(form);
+
+    document.querySelectorAll('.form-btn-section').forEach(section => {
+      section.style.display = 'none';
+    });
+
+    form.querySelector('.form-btn-section').style.display = 'block';
+
+    form.querySelectorAll('input[type="number"], select').forEach(input => {
+      input.addEventListener('input', () => calcForm(form));
+    });
+
+    hasProducts = true;
+    updateVisibility();
+    calcTotals();
+  }
+
+  function toggleDropdown(btn) {
+    hideAllAddButtons();
+
+    const section = btn.parentElement;
+    section.style.display = 'block';
+
+    const dropdown = section.querySelector('.dropdown');
+    btn.classList.toggle('active');
+    dropdown.classList.toggle('active');
+
+    if (dropdown.classList.contains('active')) {
+      const closeHandler = function(e) {
+        if (!section.contains(e.target)) {
+          btn.classList.remove('active');
+          dropdown.classList.remove('active');
+          document.removeEventListener('click', closeHandler);
+        }
+      };
+      setTimeout(() => document.addEventListener('click', closeHandler), 100);
+    }
+  }
+
+  function calcForm(form) {
+    const w_mm = parseFloat(form.querySelector('.w').value) || 0;
+    const h_mm = parseFloat(form.querySelector('.h').value) || 0;
+    const rate = parseFloat(form.querySelector('.rate').value) || 0;
+    const qty = parseFloat(form.querySelector('.qty').value) || 1;
+
+    const w_ft = w_mm / 304.8;
+    const h_ft = h_mm / 304.8;
+    const area_sqft = w_ft * h_ft;
+
+    form.querySelector('.area').value = area_sqft.toFixed(2);
+
+    const amount = area_sqft * rate * qty;
+    form.querySelector('.amountVal').innerText = amount.toFixed(2);
+
+    calcTotals();
+  }
+
+  function calcTotals() {
+    let total = 0;
+    document.querySelectorAll('.amountVal').forEach(val => {
+      total += parseFloat(val.innerText) || 0;
+    });
+
+    const gstAmount = total * 0.18;
+    document.getElementById('gst').value = '₹ ' + gstAmount.toFixed(2);
+    document.getElementById('grand').value = '₹ ' + (total + gstAmount).toFixed(2);
+  }
+
+  const addBtn = document.getElementById('addBtn');
+  const initialDropdown = document.getElementById('dropdown');
+
+  addBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    addBtn.classList.toggle('active');
+    initialDropdown.classList.toggle('active');
+  });
+
+  document.addEventListener('click', function() {
+    addBtn.classList.remove('active');
+    initialDropdown.classList.remove('active');
+  });
+
+  initialDropdown.addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+
+
+  function collectQuotationData() {
+    const data = {
+      projectName: document.getElementById('projectName').value.trim(),
+      products: []
+    };
+
+    document.querySelectorAll('.form-box').forEach(form => {
+      const selects = form.querySelectorAll('select');
+      const product = {
+        type: form.querySelector('h3').textContent.replace('Product: ', '').replace('×', '').trim(),
+        code: form.querySelector('input[readonly]').value,
+        width_mm: form.querySelector('.w').value,
+        height_mm: form.querySelector('.h').value,
+        profileBrand: selects[0].value,
+        typeSelect: selects[1].value,
+        glazing: selects[2].value,
+        profileColor: selects[3].value,
+        rate: form.querySelector('.rate').value,
+        qty: form.querySelector('.qty').value
+      };
+      data.products.push(product);
+    });
+
+    return data;
+  }
+
+  saveBtn.addEventListener('click', () => {
+    if (!projectNameEntered) {
+      alert('Please enter a project name first!');
+      return;
+    }
+    if (!hasProducts) {
+      alert('Add at least one product before saving!');
+      return;
+    }
+
+    const data = collectQuotationData();
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    const safeName = data.projectName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    a.download = `${safeName}_quotation.json`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  });
+
+  loadBtn.addEventListener('click', () => {
+    loadInput.click();
+  });
+
+  loadInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+
+        document.getElementById('formsArea').innerHTML = '';
+        document.getElementById('projectName').value = data.projectName || '';
+        projectHeading.textContent = data.projectName || 'Quotation';
+        projectNameEntered = !!data.projectName;
+        initialAddSection.style.display = projectNameEntered ? 'block' : 'none';
+
+        data.products.forEach(productData => {
+          selectProduct(productData.type);
+
+          const lastForm = document.querySelector('.form-box:last-child');
+          lastForm.querySelector('input[readonly]').value = productData.code;
+          lastForm.querySelector('.w').value = productData.width_mm || '';
+          lastForm.querySelector('.h').value = productData.height_mm || '';
+          const selects = lastForm.querySelectorAll('select');
+          selects[0].value = productData.profileBrand || selects[0].options[0].value;
+          selects[1].value = productData.typeSelect || selects[1].options[0].value;
+          selects[2].value = productData.glazing || selects[2].options[0].value;
+          selects[3].value = productData.profileColor || selects[3].options[0].value;
+          lastForm.querySelector('.rate').value = productData.rate || '';
+          lastForm.querySelector('.qty').value = productData.qty || '1';
+
+          calcForm(lastForm);
+        });
+
+        renumberProducts();
+        updateLastAddButton();
+        hasProducts = data.products.length > 0;
+        updateVisibility();
+        calcTotals();
+
+        alert('Quotation loaded successfully!');
+      } catch (err) {
+        console.error(err);
+        alert('Invalid or corrupted JSON file!');
+      }
+    };
+    reader.readAsText(file);
+
+    e.target.value = '';
+  });
+
+  updateVisibility();
+</script>
+
+</body>
+</html>
