@@ -528,6 +528,87 @@
 <input type="file" id="loadInput" accept=".json" style="display: none;">
 
 <script>
+  /* GREEN COMMENT: All product configurations are now completely separated */
+  /* Each product has its own: Type rates, Glazing options, Hardware, and BRANDS */
+  const productConfigs = {
+    'UPVC': {
+      /* CHANGE UPVC RATES HERE */
+      typeOptions: [
+        {value: "570", label: "3 Track – ₹570 / sqft"},
+        {value: "500", label: "2.5 Track – ₹500 / sqft"},
+        {value: "490", label: "2 Track – ₹490 / sqft"},
+        {value: "480", label: "Ventilator – ₹480 / sqft"}
+      ],
+      /* ADD / CHANGE UPVC BRANDS HERE */
+      brandOptions: [
+        "UPVC Green Tech",
+        "Fenesta",
+        "Prominance",
+        "Lingel"
+      ],
+      hasGlazing: false,
+      hasHardware: false
+    },
+    'Aluminium': {
+      /* CHANGE ALUMINIUM RATES HERE */
+      typeOptions: [
+        {value: "570", label: "3 Track – ₹570 / sqft"},
+        {value: "500", label: "2.5 Track – ₹500 / sqft"},
+        {value: "490", label: "2 Track – ₹490 / sqft"},
+        {value: "480", label: "Ventilator – ₹480 / sqft"}
+      ],
+      /* CHANGE ALUMINIUM GLAZING RATES HERE */
+      glazingOptions: [
+        {value: "290", label: "Glazing – ₹290 / sq ft"},
+        {value: "260", label: "ACP Panel – ₹260 / sq ft"}
+      ],
+      /* ADD / CHANGE ALUMINIUM BRANDS HERE */
+      brandOptions: [
+        "Jindal Aluminium",
+        "Hindalco",
+        "Classic Aluminium",
+        "Local Brand"
+      ],
+      hasHardware: true
+    },
+    'Interior': {
+      /* CHANGE INTERIOR RATES HERE */
+      typeOptions: [
+        {value: "570", label: "3 Track – ₹570 / sqft"},
+        {value: "500", label: "2.5 Track – ₹500 / sqft"},
+        {value: "490", label: "2 Track – ₹490 / sqft"},
+        {value: "480", label: "Ventilator – ₹480 / sqft"}
+      ],
+      /* ADD / CHANGE INTERIOR BRANDS HERE */
+      brandOptions: [
+        "Greenlam",
+        "Century Ply",
+        "Merino",
+        "Local Interior"
+      ],
+      hasGlazing: true, // non-priced glazing types
+      hasHardware: false
+    },
+    'Exterior': {
+      /* CHANGE EXTERIOR RATES HERE */
+      typeOptions: [
+        {value: "570", label: "3 Track – ₹570 / sqft"},
+        {value: "500", label: "2.5 Track – ₹500 / sqft"},
+        {value: "490", label: "2 Track – ₹490 / sqft"},
+        {value: "480", label: "Ventilator – ₹480 / sqft"}
+      ],
+      /* ADD / CHANGE EXTERIOR BRANDS HERE */
+      brandOptions: [
+        "Duro",
+        "Alstone",
+        "Aludecor",
+        "Local Exterior"
+      ],
+      hasGlazing: true,
+      hasHardware: false
+    }
+  };
+
   const productListHTML = `
     <div class="product-grid">
       <div class="product-card" onclick="selectProduct('UPVC')">UPVC</div>
@@ -626,6 +707,7 @@
     updateVisibility();
   }
 
+  /* GREEN COMMENT: Each product now gets its own unique brand list, type rates, glazing, hardware */
   function selectProduct(product) {
     hideAllAddButtons();
 
@@ -635,14 +717,60 @@
     const prefix = getProductPrefix(product);
     const code = prefix + String(nextNumber).padStart(2, '0');
 
+    const config = productConfigs[product];
+
+    /* Build Brand dropdown - completely separate for each product */
+    let brandOptionsHTML = '';
+    config.brandOptions.forEach(brand => {
+      brandOptionsHTML += `<option>${brand}</option>`;
+    });
+
+    /* Build Type dropdown - separate rates for each product */
+    let typeOptionsHTML = `<option value="">Select</option>`;
+    config.typeOptions.forEach(opt => {
+      typeOptionsHTML += `<option value="${opt.value}">${opt.label}</option>`;
+    });
+
+    let typeHTML = `
+      <div><label>Type</label>
+        <select class="type-select">
+          ${typeOptionsHTML}
+        </select>
+      </div>
+    `;
+
     let glazingHTML = '';
-    if (product !== 'UPVC') {
+    if (product === 'Aluminium') {
+      let glazingOptionsHTML = '';
+      config.glazingOptions.forEach(opt => {
+        glazingOptionsHTML += `<option value="${opt.value}">${opt.label}</option>`;
+      });
+      glazingHTML = `
+        <div><label>Glazing / Panel</label>
+          <select class="glazing-select">
+            ${glazingOptionsHTML}
+          </select>
+        </div>
+      `;
+    } else if (config.hasGlazing) {
       glazingHTML = `
         <div><label>Glazing</label>
           <select>
             <option>Clear Glass</option>
             <option>Frosted Glass</option>
             <option>Toughened Glass</option>
+          </select>
+        </div>
+      `;
+    }
+
+    let hardwareHTML = '';
+    if (config.hasHardware) {
+      hardwareHTML = `
+        <div><label>Hardware Used</label>
+          <select class="hardware-select">
+            <option>Chrome Track Wool</option>
+            <option>RPF Bearing Hardwares</option>
           </select>
         </div>
       `;
@@ -664,22 +792,16 @@
 
       <div class="grid">
         <div><label>Profile Brand</label>
-          <select>
-            <option>UPVC Green Tech</option>
+          <select class="brand-select">
+            ${brandOptionsHTML}
           </select>
         </div>
 
-        <div><label>Type</label>
-          <select class="type-select">
-            <option value="">Select</option>
-            <option value="570">3 Track – ₹570 / sqft</option>
-            <option value="500">2.5 Track – ₹500 / sqft</option>
-            <option value="490">2 Track – ₹490 / sqft</option>
-            <option value="480">Ventilator – ₹480 / sqft</option>
-          </select>
-        </div>
+        ${typeHTML}
 
         ${glazingHTML}
+
+        ${hardwareHTML}
 
         <div><label>Profile Color</label>
           <select class="color-select">
@@ -710,8 +832,8 @@
 
     form.querySelector('.form-btn-section').style.display = 'block';
 
-    // Attach event listeners for auto-calculation
-    const inputsToWatch = form.querySelectorAll('.w, .h, .type-select, .color-select, .qty');
+    /* GREEN COMMENT: Event listeners are scoped only to this form → calculations are isolated */
+    const inputsToWatch = form.querySelectorAll('.w, .h, .type-select, .color-select, .qty, .glazing-select');
     inputsToWatch.forEach(input => {
       input.addEventListener('input', () => calcForm(form));
     });
@@ -748,24 +870,25 @@
     const h_mm = parseFloat(form.querySelector('.h').value) || 0;
     const qty = parseFloat(form.querySelector('.qty').value) || 1;
 
-    // More accurate area calculation: 1 square foot = 92903.04 mm² exactly
     const area_sqmm = w_mm * h_mm;
     const area_sqft = area_sqmm / 92903.04;
     form.querySelector('.area').value = area_sqft.toFixed(4);
 
-    // Get base rate from Type
     const typeSelect = form.querySelector('.type-select');
     const baseRate = parseFloat(typeSelect.value) || 0;
 
-    // Get additional rate from Color
     const colorSelect = form.querySelector('.color-select');
     const colorRate = parseFloat(colorSelect.value) || 0;
 
-    // Total rate per sqft
-    const totalRate = baseRate + colorRate;
+    let glazingRate = 0;
+    const glazingSelect = form.querySelector('.glazing-select');
+    if (glazingSelect) {
+      glazingRate = parseFloat(glazingSelect.value) || 0;
+    }
+
+    const totalRate = baseRate + colorRate + glazingRate;
     form.querySelector('.rate').value = totalRate.toFixed(2);
 
-    // Calculate amount with higher precision area
     const amount = area_sqft * totalRate * qty;
     form.querySelector('.amountVal').innerText = amount.toFixed(2);
 
@@ -801,7 +924,7 @@
     e.stopPropagation();
   });
 
-
+  /* GREEN COMMENT: Save/Load now correctly handles separate brand lists per product */
   function collectQuotationData() {
     const data = {
       projectName: document.getElementById('projectName').value.trim(),
@@ -809,16 +932,16 @@
     };
 
     document.querySelectorAll('.form-box').forEach(form => {
-      const selects = form.querySelectorAll('select');
       const product = {
         type: form.querySelector('h3').textContent.replace('Product: ', '').replace('×', '').trim(),
         code: form.querySelector('input[readonly]').value,
         width_mm: form.querySelector('.w').value,
         height_mm: form.querySelector('.h').value,
-        profileBrand: selects[0].value,
-        typeSelect: selects[1].value,
-        glazing: selects.length > 2 ? selects[2].value : '',
-        profileColor: selects[selects.length > 3 ? 3 : 2].value,
+        profileBrand: form.querySelector('.brand-select')?.value || '',
+        typeSelect: form.querySelector('.type-select').value,
+        glazing: form.querySelector('.glazing-select')?.value || '',
+        hardware: form.querySelector('.hardware-select')?.value || '',
+        profileColor: form.querySelector('.color-select').value,
         rate: form.querySelector('.rate').value,
         qty: form.querySelector('.qty').value
       };
@@ -878,18 +1001,19 @@
           lastForm.querySelector('input[readonly]').value = productData.code;
           lastForm.querySelector('.w').value = productData.width_mm || '';
           lastForm.querySelector('.h').value = productData.height_mm || '';
-          const selects = lastForm.querySelectorAll('select');
-          selects[0].value = productData.profileBrand || selects[0].options[0].value;
-          selects[1].value = productData.typeSelect || '';
           
-          if (productData.type !== 'UPVC' && selects.length > 2) {
-            selects[2].value = productData.glazing || selects[2].options[0].value;
-          }
+          const brandSelect = lastForm.querySelector('.brand-select');
+          if (brandSelect) brandSelect.value = productData.profileBrand || brandSelect.options[0].value;
           
-          const colorIndex = productData.type === 'UPVC' ? 2 : 3;
-          if (selects.length > colorIndex) {
-            selects[colorIndex].value = productData.profileColor || selects[colorIndex].options[0].value;
-          }
+          lastForm.querySelector('.type-select').value = productData.typeSelect || '';
+          
+          const glazingSelect = lastForm.querySelector('.glazing-select');
+          if (glazingSelect) glazingSelect.value = productData.glazing || glazingSelect.options[0].value;
+          
+          const hardwareSelect = lastForm.querySelector('.hardware-select');
+          if (hardwareSelect) hardwareSelect.value = productData.hardware || hardwareSelect.options[0].value;
+          
+          lastForm.querySelector('.color-select').value = productData.profileColor || '0';
           
           lastForm.querySelector('.qty').value = productData.qty || '1';
 
